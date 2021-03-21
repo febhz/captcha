@@ -1,5 +1,5 @@
 {
-    "name": "imyfone/captcha",
+    "name": "imyfone-tp/captcha",
     "description": "A class of JWT captcha based on thinkphp5",
     "type": "victor",
     "license": "Apache-2.0",
