@@ -4,7 +4,6 @@
     "type": "victor",
     "license": "Apache-2.0",
     "require": {
-        "captcha": "1.0.0",
         "php":">=7.0"
     },
     "authors": [
