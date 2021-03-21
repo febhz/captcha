@@ -1,0 +1,23 @@
+{
+    "name": "imyfone/captcha",
+    "description": "A class of JWT captcha based on thinkphp5",
+    "type": "victor",
+    "license": "Apache-2.0",
+    "require": {
+        "captcha": "1.0.0",
+        "php":">=7.0"
+    },
+    "authors": [
+        {
+            "name": "hz",
+            "email": "647820871@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": { 
+            "captcha": "src/",
+        }
+
+    }
+}
