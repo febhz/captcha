@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "require": {
         "php":">=7.0",
-        "topthink/think-cache":"dev-master"
+        "topthink/think-cache":"1.0"
     },
     "authors": [
         {
