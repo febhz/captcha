@@ -3,7 +3,7 @@
 namespace imyfone;
 
 use captcha\Captcha;
-use captcha\Cache;
+use think\facade\Cache;
 
 /**
  *
@@ -12,10 +12,10 @@ use captcha\Cache;
 class TheCaptcha extends Captcha
 {
 	private $uniqid;
+	private $expire=60;
     public function __construct($config = [])
     {
         parent::__construct($config);
-        $this->cache = new Cache();
     }
 
     /**
@@ -47,13 +47,13 @@ class TheCaptcha extends Captcha
 	{
         $key = $this->authcode($this->seKey) . $id;
         // 验证码不能为空
-        $secode = $this->session->get($key);
+        $secode = Session::get($key, '');
         if (empty($secode) || empty($secode['verify_code'])) {
             return false;
         }
         $this->uniqid = md5($secode['verify_code']);
         // 写入缓存
-        $this->cache->put($this->uniqid, $secode['verify_code']);
+        Cache::set($this->uniqid, $secode['verify_code'], $this->expire);
         return $secode['verify_code'];
 	}
 
@@ -68,14 +68,14 @@ class TheCaptcha extends Captcha
     public function checkCaptcha($uniqid, $code, $id = '')
     {
     	// 获取并删除缓存
-        $verify_code = $this->cache->get($uniqid);
+        $verify_code = Cache::pull($uniqid);
         if(empty($verify_code))
         {
         	return false;
         }
         $key = $this->authcode($this->seKey) . $id;
         if ($this->authcode(strtoupper($code)) == $verify_code) {
-            $this->reset && $this->session->del($key);;
+            $this->reset && Session::delete($key, '');
             return true;
         }
 
