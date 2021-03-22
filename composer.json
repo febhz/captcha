@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "require": {
         "php":">=7.0",
-        "composer require topthink/think-cache":"dev-master",
+        "composer require topthink/think-cache":"dev-master"
     },
     "authors": [
         {
