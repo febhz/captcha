@@ -9,14 +9,14 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace think\captcha;
+namespace captcha;
 
-use think\facade\Session;
+use captcha\Session;
 
 class Captcha
 {
     protected $config = [
-        'seKey'    => 'ThinkPHP.CN',
+        'seKey'    => 'imyfone',
         // 验证码加密密钥
         'codeSet'  => '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY',
         // 验证码字符集合
@@ -38,7 +38,7 @@ class Captcha
         // 验证码图片高度
         'imageW'   => 0,
         // 验证码图片宽度
-        'length'   => 5,
+        'length'   => 4,
         // 验证码位数
         'fontttf'  => '',
         // 验证码字体，不设置随机获取
@@ -59,6 +59,7 @@ class Captcha
     public function __construct($config = [])
     {
         $this->config = array_merge($this->config, $config);
+        $this->session = new Session();
     }
 
     /**
@@ -108,18 +109,18 @@ class Captcha
     {
         $key = $this->authcode($this->seKey) . $id;
         // 验证码不能为空
-        $secode = Session::get($key, '');
+        $secode = $this->session->get($key);
         if (empty($code) || empty($secode)) {
             return false;
         }
         // session 过期
         if (time() - $secode['verify_time'] > $this->expire) {
-            Session::delete($key, '');
+            $this->session->del($key);
             return false;
         }
 
         if ($this->authcode(strtoupper($code)) == $secode['verify_code']) {
-            $this->reset && Session::delete($key, '');
+            $this->reset && $this->session->del($key);
             return true;
         }
 
@@ -198,7 +199,7 @@ class Captcha
         $secode                = [];
         $secode['verify_code'] = $code; // 把校验码保存到session
         $secode['verify_time'] = time(); // 验证码创建时间
-        Session::set($key . $id, $secode, '');
+        $this->session->set($key . $id,$secode);
 
         ob_start();
         // 输出图像
