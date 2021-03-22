@@ -32,7 +32,7 @@ $config=[
     'fontttf'  => '',
     // 验证码字体，不设置随机获取
 ];
-$id = 'hello';
+$id = 'hello';//id随便定义一个，也可以不定义
 $captcha = new TheCaptcha($config);
 return $captcha->getEntry($id);
 ```
@@ -40,11 +40,16 @@ return $captcha->getEntry($id);
 ```php
 //验证操作
 use imyfone\TheCaptcha;
+
+$id = 'hello';//id与上面定义的id一致
 $uniqid = $_POST['uniqid'];
 $code = $_POST['code'];
 $captcha = new TheCaptcha();
-if($captcha->checkCaptcha($uniqid,$code) === true){
-	//验证成功
+if($captcha->checkCaptcha($uniqid,$code,$id) === true){
+	# 验证成功
+}
+else{
+    # 验证失败
 }
 
 ```
