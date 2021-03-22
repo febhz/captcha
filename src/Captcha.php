@@ -9,16 +9,16 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace captcha;
+namespace imyfone;
 
-use captcha\Session;
+use think\facade\Cache;
 
 class Captcha
 {
     protected $config = [
         'seKey'    => 'imyfone',
         // 验证码加密密钥
-        'codeSet'  => '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY',
+        'codeSet'  => '123456789ABCDEFGHIJKLMNPQRSTUVWSYZ',
         // 验证码字符集合
         'expire'   => 1800,
         // 验证码过期时间（s）
@@ -59,7 +59,6 @@ class Captcha
     public function __construct($config = [])
     {
         $this->config = array_merge($this->config, $config);
-        $this->session = new Session();
     }
 
     /**
@@ -109,18 +108,18 @@ class Captcha
     {
         $key = $this->authcode($this->seKey) . $id;
         // 验证码不能为空
-        $secode = $this->session->get($key);
+        $secode = Cache::get($key);
         if (empty($code) || empty($secode)) {
             return false;
         }
-        // session 过期
+        // cache 过期
         if (time() - $secode['verify_time'] > $this->expire) {
-            $this->session->del($key);
+            Cache::rm($key);
             return false;
         }
 
         if ($this->authcode(strtoupper($code)) == $secode['verify_code']) {
-            $this->reset && $this->session->del($key);
+            $this->reset && Cache::rm($key);
             return true;
         }
 
@@ -128,8 +127,8 @@ class Captcha
     }
 
     /**
-     * 输出验证码并把验证码的值保存的session中
-     * 验证码保存到session的格式为： array('verify_code' => '验证码值', 'verify_time' => '验证码创建时间');
+     * 输出验证码并把验证码的值保存的缓存中
+     * 验证码保存到cache的格式为： array('verify_code' => '验证码值', 'verify_time' => '验证码创建时间');
      * @access public
      * @param string $id 要生成验证码的标识
      * @return \think\Response
@@ -197,9 +196,9 @@ class Captcha
         $key                   = $this->authcode($this->seKey);
         $code                  = $this->authcode(strtoupper(implode('', $code)));
         $secode                = [];
-        $secode['verify_code'] = $code; // 把校验码保存到session
+        $secode['verify_code'] = $code; // 把校验码保存到缓存
         $secode['verify_time'] = time(); // 验证码创建时间
-        $this->session->set($key . $id,$secode);
+        Cache::set($key . $id,$secode,60);
 
         ob_start();
         // 输出图像
