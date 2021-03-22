@@ -2,7 +2,7 @@
 
 namespace imyfone;
 
-use captcha\Captcha;
+use imyfone\Captcha;
 use think\facade\Cache;
 
 /**
@@ -47,7 +47,7 @@ class TheCaptcha extends Captcha
     {
         $key = $this->authcode($this->seKey) . $id;
         // 验证码不能为空
-        $secode = Session::get($key, '');
+        $secode = Cache::get($key);
         if (empty($secode) || empty($secode['verify_code'])) {
             return false;
         }
@@ -75,7 +75,7 @@ class TheCaptcha extends Captcha
         }
         $key = $this->authcode($this->seKey) . $id;
         if ($this->authcode(strtoupper($code)) == $verify_code) {
-            $this->reset && Session::delete($key, '');
+            $this->reset && Cache::rm($key);
             return true;
         }
 
